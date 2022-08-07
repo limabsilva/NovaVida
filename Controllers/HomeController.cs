@@ -2,24 +2,26 @@
 using Microsoft.AspNetCore.Mvc;
 using NovaVida.Models;
 using NovaVida.Services;
+using NovaVida.Interfaces;
 
 namespace NovaVida.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly ICrawlerService _crawlerService;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, ICrawlerService crawlerService)
     {
         _logger = logger;
+        _crawlerService = crawlerService;
     }
 
     public IActionResult Index(string pesquisar)
     {
         if (!String.IsNullOrEmpty(pesquisar))
-        {
-            Crawler crawler = new Crawler();
-            var productsList = crawler.Pesquisar();
+        {            
+            var productsList = _crawlerService.Pesquisar(pesquisar);
             ViewBag.ProductsList = productsList;
         }
         return View();
