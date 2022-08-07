@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Crawler";
+    var pesquisar = "pesquisar";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Crawler - PERIFÉRICOS KABUM</h1>
+    <br/><br/>
+<form asp-controller="Home" asp-action="Index" method="post">
+    Pesquisar: <input asp-for="@pesquisar" />     
+    <button type="submit">Buscar</button>
+</form>
+    <br/>
+    <br/>
+    <div>
+        <ul>
+        @if(ViewBag.ProductsList != null)
+        {
+        @foreach (var item in ViewBag.ProductsList)
+        {
+            <li>@item.NameProduct  -  @item.PriceProduct</li>
+        }
+        }
+        </ul>
+    </div>
+</div>
