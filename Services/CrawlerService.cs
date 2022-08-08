@@ -16,16 +16,16 @@ public class CrawlerService : ICrawlerService
     {
 
         List<Products> productsList = new List<Products>();
-        Products products = new Products()
-        {
-            NameProduct = "Headset Gamer Redragon Zeus X, Chroma Mk.II, RGB, Surround 7.1, USB, Drivers 53MM, Preto/Vermelho - H510-RGB",
-            IdProduct = 1,
-            PriceProduct = (decimal)299.90,
-            URLProduct = "https://www.kabum.com.br/produto/227818/headset-gamer-redragon-zeus-x-chroma-mk-ii-rgb-surround-7-1-usb-drivers-53mm-preto-vermelho-h510-rgb"
-        };
-        productsList.Add(products);
+        //Products products = new Products()
+        //{
+        //    NameProduct = "Headset Gamer Redragon Zeus X, Chroma Mk.II, RGB, Surround 7.1, USB, Drivers 53MM, Preto/Vermelho - H510-RGB",
+        //    IdProduct = 1,
+        //    PriceProduct = "",
+        //    URLProduct = "https://www.kabum.com.br/produto/227818/headset-gamer-redragon-zeus-x-chroma-mk-ii-rgb-surround-7-1-usb-drivers-53mm-preto-vermelho-h510-rgb"
+        //};
+        //productsList.Add(products);
 
-        Tracker(strSearch);
+        productsList = Tracker(strSearch);
 
         return productsList;
     }
@@ -33,7 +33,6 @@ public class CrawlerService : ICrawlerService
     public List<Products> Tracker(string strSearch)
     {
 
-        Stream streamRet;
         List<Products> productsList = new List<Products>();
         string strURI = _crawlerUrl + strSearch;
 
@@ -62,38 +61,62 @@ public class CrawlerService : ICrawlerService
             var patternURL = @"(<a [^>]*href=(?:'(?<href>.*?)')|(?:\""(?<href>.*?)\""))";
 
             var container = htmlDoc.DocumentNode.SelectSingleNode("//main[@id='listing']");
-            var regex = new Regex(patternMain, RegexOptions.IgnoreCase);
-            Match m = regex.Match(container.InnerHtml);
-            //var productCard = regex.Matches(container.InnerHtml).OfType<Match>().FirstOrDefault().Groups[0];
-            if (m.Success)
+            if (container != null)
             {
-                var productCardM = m.Groups[0];
-                var nodes = container.SelectNodes(productCardM.ToString().Replace("<div", "//div [@").Replace(">", "]"));
-                foreach (var node in nodes)
+                var regex = new Regex(patternMain, RegexOptions.IgnoreCase);
+                Match m = regex.Match(container.InnerHtml);
+                if (m.Success)
                 {
-                    var navigator = (HtmlAgilityPack.HtmlNodeNavigator)node.CreateNavigator();
-                    //GetNameProduct
-                    var regexName = new Regex(patternName, RegexOptions.IgnoreCase);
-                    Match mName = regexName.Match(node.InnerHtml);
-                    var nameProduct = node.SelectSingleNode(mName.Groups[0].ToString().Replace("<span height=\"54\"", "//span [@").Replace(">", "]")).InnerText;
+                    var productCardM = m.Groups[0];
+                    var nodes = container.SelectNodes(productCardM.ToString().Replace("<div", "//div [@").Replace(">", "]"));
+                    string nameProduct, priceProduct, urlProduct;
+
+                    foreach (var node in nodes)
+                    {
+                        var navigator = (HtmlAgilityPack.HtmlNodeNavigator)node.CreateNavigator();
+
+                        //GetNameProduct
+                        //var regexName = new Regex(patternName, RegexOptions.IgnoreCase);
+                        //Match mName = regexName.Match(node.InnerHtml);
+                        //nameProduct = node.SelectSingleNode(mName.Groups[0].ToString().Replace("<span height=\"54\"", "//span [@").Replace(">", "]")).InnerText;
+                        nameProduct = node.InnerText;
 
 
+                        //GetPriceProduct                    
+                        //var regexPrice = new Regex(patternPrice, RegexOptions.IgnoreCase);
+                        //Match mPrice = regexPrice.Match(node.InnerHtml);
+                        //priceProduct = node.SelectSingleNode(mPrice.Groups[0].ToString().Replace("<span", "//span [@").Replace(">", "]")).InnerText;
+                        priceProduct = "";
 
-                    //GetPriceProduct                    
-                    var regexPrice = new Regex(patternPrice, RegexOptions.IgnoreCase);
-                    Match mPrice = regexPrice.Match(node.InnerHtml);
-                    var priceProduct = Convert.ToDecimal(node.SelectSingleNode(mPrice.Groups[0].ToString().Replace("<span", "//span [@").Replace(">", "]")).InnerText.Replace("R$","").Trim());
+
+                        //GetURLProduct
+                        //var regexURL = new Regex(patternURL, RegexOptions.IgnoreCase);
+                        //Match mUrl = regexURL.Match(node.InnerHtml);
+                        //urlProduct = mUrl.Groups[0].ToString();
+                        urlProduct = "";
 
 
+                        productsList.Add(
+                            new Products()
+                            {
+                                NameProduct = nameProduct,
+                                PriceProduct = priceProduct,
+                                URLProduct = urlProduct
+                            });
 
-                    //GetURLProduct
-                    var regexURL = new Regex(patternURL, RegexOptions.IgnoreCase);
-                    Match mUrl = regexURL.Match(node.InnerHtml);
-                    var urlProduct = mUrl.Groups[0];
+                    }
                 }
             }
-
-
+            else
+            {
+                productsList.Add(
+                    new Products()
+                    {
+                        NameProduct = "Lista de produtos não disponível.",
+                        PriceProduct = null,
+                        URLProduct = null
+                    });
+            }
         }
 
         return productsList;

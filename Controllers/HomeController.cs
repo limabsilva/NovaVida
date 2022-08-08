@@ -10,11 +10,13 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly ICrawlerService _crawlerService;
+    private readonly IProductsRepository _productsRepository;
 
-    public HomeController(ILogger<HomeController> logger, ICrawlerService crawlerService)
+    public HomeController(ILogger<HomeController> logger, ICrawlerService crawlerService, IProductsRepository productsRepository)
     {
         _logger = logger;
         _crawlerService = crawlerService;
+        _productsRepository = productsRepository;
     }
 
     public IActionResult Index(string strSearch)
@@ -22,7 +24,11 @@ public class HomeController : Controller
         if (!String.IsNullOrEmpty(strSearch))
         {            
             var productsList = _crawlerService.SearchProduct(strSearch);
-            ViewBag.ProductsList = productsList;
+            if(productsList != null)
+            {
+                ViewBag.ProductsList = productsList;
+                _productsRepository.SaveManyProducts(productsList);
+            }            
         }
         return View();
     }

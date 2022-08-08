@@ -16,4 +16,21 @@ public class ProductRepository : IProductsRepository
         _crawlerContext.Products.Add(products);
         return _crawlerContext.SaveChanges();
     }
+
+    public long SaveManyProducts(List<Products> productsList)
+    {
+        try
+        {
+            foreach(Products products in productsList)
+            {
+                SaveProduct(products);
+            }
+            return 1;
+        }
+        catch (Exception)
+        {
+
+            return 0;
+        }
+    }
 }
