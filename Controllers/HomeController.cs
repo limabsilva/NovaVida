@@ -17,11 +17,11 @@ public class HomeController : Controller
         _crawlerService = crawlerService;
     }
 
-    public IActionResult Index(string pesquisar)
+    public IActionResult Index(string strSearch)
     {
-        if (!String.IsNullOrEmpty(pesquisar))
+        if (!String.IsNullOrEmpty(strSearch))
         {            
-            var productsList = _crawlerService.Pesquisar(pesquisar);
+            var productsList = _crawlerService.SearchProduct(strSearch);
             ViewBag.ProductsList = productsList;
         }
         return View();

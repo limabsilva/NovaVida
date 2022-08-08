@@ -4,6 +4,6 @@ namespace NovaVida.Interfaces;
 
 public interface ICrawlerService
 {
-    public List<Products> Pesquisar(string txtPesquisar);
+    public List<Products> SearchProduct(string strSearch);
 }
 

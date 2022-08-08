@@ -1,14 +1,14 @@
 ﻿@{
     ViewData["Title"] = "Crawler";
-    var pesquisar = "pesquisar";
+    var strSearch = "strSearch";
 }
 
 <div class="text-center">
     <h1 class="display-4">Crawler - KABUM</h1>
     <br/><br/>
 <form asp-controller="Home" asp-action="Index" method="post">
-    Pesquisar: <input asp-for="@pesquisar" />     
-    <button type="submit">Buscar</button>
+    Pesquisar: <input asp-for="@strSearch" value="" />     
+    <button type="submit">Search</button>
 </form>
     <br/>
     <br/>
